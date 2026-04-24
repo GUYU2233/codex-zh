@@ -2301,12 +2301,7 @@ impl ChatWidget {
             ]
             .into()
         } else {
-            vec![
-                "• ".dim(),
-                "线程分叉自 ".into(),
-                forked_from_id_text.cyan(),
-            ]
-            .into()
+            vec!["• ".dim(), "线程分叉自 ".into(), forked_from_id_text.cyan()].into()
         };
         self.app_event_tx.send(AppEvent::InsertHistoryCell(Box::new(
             PlainHistoryCell::new(vec![line]),
@@ -2768,9 +2763,7 @@ impl ChatWidget {
         let items = vec![
             SelectionItem {
                 name: MULTI_AGENT_ENABLE_YES.to_string(),
-                description: Some(
-                    "立即保存设置。需要开启新会话后才会生效。".to_string(),
-                ),
+                description: Some("立即保存设置。需要开启新会话后才会生效。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::UpdateFeatureFlags {
                         updates: vec![(Feature::Collab, true)],
@@ -2817,9 +2810,7 @@ impl ChatWidget {
         let items = vec![
             SelectionItem {
                 name: MEMORIES_ENABLE_YES.to_string(),
-                description: Some(
-                    "立即保存设置。需要开启新会话后才会生效。".to_string(),
-                ),
+                description: Some("立即保存设置。需要开启新会话后才会生效。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::UpdateFeatureFlags {
                         updates: vec![(Feature::MemoryTool, true)],
@@ -3116,10 +3107,7 @@ impl ChatWidget {
                 );
             }
             Some(RateLimitReachedType::WorkspaceOwnerUsageLimitReached) => {
-                self.on_error(
-                    "已达到使用限制。请提高限制后继续使用 Codex。"
-                        .to_string(),
-                );
+                self.on_error("已达到使用限制。请提高限制后继续使用 Codex。".to_string());
             }
             Some(RateLimitReachedType::WorkspaceMemberCreditsDepleted) => {
                 self.on_error(message);
@@ -3412,9 +3400,9 @@ impl ChatWidget {
             McpServerStartupState::Starting => McpStartupStatus::Starting,
             McpServerStartupState::Ready => McpStartupStatus::Ready,
             McpServerStartupState::Failed => McpStartupStatus::Failed {
-                error: notification.error.unwrap_or_else(|| {
-                    format!("`{}` 的 MCP 客户端启动失败", notification.name)
-                }),
+                error: notification
+                    .error
+                    .unwrap_or_else(|| format!("`{}` 的 MCP 客户端启动失败", notification.name)),
             },
             McpServerStartupState::Cancelled => McpStartupStatus::Cancelled,
         };
@@ -3443,7 +3431,8 @@ impl ChatWidget {
                 ));
             } else {
                 self.add_to_history(history_cell::new_error_event(
-                    "对话已中断，请告诉模型需要如何调整。遇到问题可使用 `/feedback` 反馈。".to_owned(),
+                    "对话已中断，请告诉模型需要如何调整。遇到问题可使用 `/feedback` 反馈。"
+                        .to_owned(),
                 ));
             }
         }
@@ -3856,9 +3845,7 @@ impl ChatWidget {
                     "codex 调用 MCP 工具 {server}.{tool_name}"
                 )),
                 GuardianAssessmentAction::NetworkAccess { target, .. } => {
-                    history_cell::new_guardian_denied_action_request(format!(
-                        "codex 访问 {target}"
-                    ))
+                    history_cell::new_guardian_denied_action_request(format!("codex 访问 {target}"))
                 }
                 GuardianAssessmentAction::RequestPermissions { reason, .. } => {
                     history_cell::new_guardian_denied_action_request(permission_request_summary(
@@ -4238,9 +4225,7 @@ impl ChatWidget {
                                 .as_ref()
                                 .and_then(|thread_id| agents_states.get(&thread_id.to_string()))
                                 .map(app_server_collab_state_to_core)
-                                .unwrap_or_else(|| {
-                                    AgentStatus::Errored("Agent 启动失败".into())
-                                }),
+                                .unwrap_or_else(|| AgentStatus::Errored("Agent 启动失败".into())),
                         },
                         spawn_request.as_ref(),
                     ));
@@ -4266,9 +4251,7 @@ impl ChatWidget {
                                 .iter()
                                 .find_map(|thread_id| agents_states.get(thread_id))
                                 .map(app_server_collab_state_to_core)
-                                .unwrap_or_else(|| {
-                                    AgentStatus::Errored("Agent 交互失败".into())
-                                }),
+                                .unwrap_or_else(|| AgentStatus::Errored("Agent 交互失败".into())),
                         },
                     ));
                 }
@@ -4366,9 +4349,7 @@ impl ChatWidget {
                                 .iter()
                                 .find_map(|thread_id| agents_states.get(thread_id))
                                 .map(app_server_collab_state_to_core)
-                                .unwrap_or_else(|| {
-                                    AgentStatus::Errored("Agent 关闭失败".into())
-                                }),
+                                .unwrap_or_else(|| AgentStatus::Errored("Agent 关闭失败".into())),
                         },
                     ));
                 }
@@ -4541,9 +4522,7 @@ impl ChatWidget {
         self.bottom_pane.ensure_status_indicator();
         self.bottom_pane
             .set_interrupt_hint_visible(/*visible*/ false);
-        let message = event
-            .message
-            .unwrap_or_else(|| "正在撤销...".to_string());
+        let message = event.message.unwrap_or_else(|| "正在撤销...".to_string());
         self.terminal_title_status_kind = TerminalTitleStatusKind::Undoing;
         self.set_status_header(message);
     }
@@ -5636,9 +5615,9 @@ impl ChatWidget {
                         /*hint*/ None,
                     ));
                 }
-                Err(error) => self.add_to_history(history_cell::new_error_event(format!(
-                    "复制失败：{error}"
-                ))),
+                Err(error) => {
+                    self.add_to_history(history_cell::new_error_event(format!("复制失败：{error}")))
+                }
             },
             _ if self.copy_history_evicted_by_rollback => {
                 self.add_to_history(history_cell::new_error_event(format!(
@@ -7861,10 +7840,7 @@ impl ChatWidget {
         self.submit_op(AppCommand::clean_background_terminals());
         self.unified_exec_processes.clear();
         self.sync_unified_exec_footer();
-        self.add_info_message(
-            "正在停止所有后台终端。".to_string(),
-            /*hint*/ None,
-        );
+        self.add_info_message("正在停止所有后台终端。".to_string(), /*hint*/ None);
     }
 
     fn stop_rate_limit_poller(&mut self) {}
@@ -8051,9 +8027,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: "保留当前模型（不再提示）".to_string(),
-                description: Some(
-                    "以后不再显示切换模型的速率限制提醒。".to_string(),
-                ),
+                description: Some("以后不再显示切换模型的速率限制提醒。".to_string()),
                 selected_description: None,
                 is_current: false,
                 actions: never_actions,
@@ -8149,9 +8123,7 @@ impl ChatWidget {
                 AddCreditsNudgeCreditType::Credits,
                 Ok(AddCreditsNudgeEmailStatus::CooldownActive),
             ) => "最近已经通知过 workspace 所有者。",
-            (AddCreditsNudgeCreditType::Credits, Err(_)) => {
-                "无法通知 workspace 所有者。请重试。"
-            }
+            (AddCreditsNudgeCreditType::Credits, Err(_)) => "无法通知 workspace 所有者。请重试。",
             (AddCreditsNudgeCreditType::UsageLimit, Ok(AddCreditsNudgeEmailStatus::Sent)) => {
                 "已请求提高限制。"
             }
@@ -8159,9 +8131,7 @@ impl ChatWidget {
                 AddCreditsNudgeCreditType::UsageLimit,
                 Ok(AddCreditsNudgeEmailStatus::CooldownActive),
             ) => "最近已经请求过提高限制。",
-            (AddCreditsNudgeCreditType::UsageLimit, Err(_)) => {
-                "无法请求提高限制。请重试。"
-            }
+            (AddCreditsNudgeCreditType::UsageLimit, Err(_)) => "无法请求提高限制。请重试。",
         };
         self.add_to_history(history_cell::new_info_event(
             message.to_string(),
@@ -8174,10 +8144,7 @@ impl ChatWidget {
     /// opens the full picker with every available preset.
     pub(crate) fn open_model_popup(&mut self) {
         if !self.is_session_configured() {
-            self.add_info_message(
-                "启动完成前无法选择模型。".to_string(),
-                /*hint*/ None,
-            );
+            self.add_info_message("启动完成前无法选择模型。".to_string(), /*hint*/ None);
             return;
         }
 
@@ -8306,10 +8273,7 @@ impl ChatWidget {
                 self.open_realtime_audio_device_selection_with_names(kind, device_names);
             }
             Err(err) => {
-                self.add_error_message(format!(
-                    "加载实时{}设备失败：{err}",
-                    kind.noun()
-                ));
+                self.add_error_message(format!("加载实时{}设备失败：{err}", kind.noun()));
             }
         }
     }
@@ -8372,9 +8336,7 @@ impl ChatWidget {
 
         let mut header = ColumnRenderable::new();
         header.push(Line::from(format!("选择{}", kind.title()).bold()));
-        header.push(Line::from(
-            "保存的设备仅用于实时语音。".dim(),
-        ));
+        header.push(Line::from("保存的设备仅用于实时语音。".dim()));
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             header: Box::new(header),
@@ -8398,10 +8360,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: "稍后应用".to_string(),
-                description: Some(format!(
-                    "在本地音频重新启动前保留当前{}。",
-                    kind.noun()
-                )),
+                description: Some(format!("在本地音频重新启动前保留当前{}。", kind.noun())),
                 dismiss_on_select: true,
                 ..Default::default()
             },
@@ -8409,9 +8368,7 @@ impl ChatWidget {
 
         let mut header = ColumnRenderable::new();
         header.push(Line::from(format!("立即重启{}？", kind.title()).bold()));
-        header.push(Line::from(
-            "配置已保存。重启本地音频后可立即使用。".dim(),
-        ));
+        header.push(Line::from("配置已保存。重启本地音频后可立即使用。".dim()));
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             header: Box::new(header),
@@ -8519,9 +8476,7 @@ impl ChatWidget {
             })];
 
             let is_current = !items.iter().any(|item| item.is_current);
-            let description = Some(format!(
-                "选择指定模型和推理等级（当前：{current_label}）"
-            ));
+            let description = Some(format!("选择指定模型和推理等级（当前：{current_label}）"));
 
             items.push(SelectionItem {
                 name: "全部模型".to_string(),
@@ -8533,10 +8488,7 @@ impl ChatWidget {
             });
         }
 
-        let header = self.model_menu_header(
-            "选择模型",
-            "选择快速自动模式，或浏览全部模型。",
-        );
+        let header = self.model_menu_header("选择模型", "选择快速自动模式，或浏览全部模型。");
         self.bottom_pane.show_selection_view(SelectionViewParams {
             footer_hint: Some(standard_popup_hint_line()),
             items,
@@ -8560,10 +8512,7 @@ impl ChatWidget {
 
     pub(crate) fn open_all_models_popup(&mut self, presets: Vec<ModelPreset>) {
         if presets.is_empty() {
-            self.add_info_message(
-                "当前没有更多可用模型。".to_string(),
-                /*hint*/ None,
-            );
+            self.add_info_message("当前没有更多可用模型。".to_string(), /*hint*/ None);
             return;
         }
 
@@ -8607,10 +8556,7 @@ impl ChatWidget {
     pub(crate) fn open_collaboration_modes_popup(&mut self) {
         let presets = collaboration_modes::presets_for_tui(self.model_catalog.as_ref());
         if presets.is_empty() {
-            self.add_info_message(
-                "当前没有可用协作模式。".to_string(),
-                /*hint*/ None,
-            );
+            self.add_info_message("当前没有可用协作模式。".to_string(), /*hint*/ None);
             return;
         }
 
@@ -8932,9 +8878,7 @@ impl ChatWidget {
         }
 
         let mut header = ColumnRenderable::new();
-        header.push(Line::from(
-            format!("为 {model_slug} 选择推理等级").bold(),
-        ));
+        header.push(Line::from(format!("为 {model_slug} 选择推理等级").bold()));
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             header: Box::new(header),
@@ -9230,10 +9174,7 @@ impl ChatWidget {
             tx.send(AppEvent::UpdateSandboxPolicy(sandbox_clone));
             tx.send(AppEvent::UpdateApprovalsReviewer(approvals_reviewer));
             tx.send(AppEvent::InsertHistoryCell(Box::new(
-                history_cell::new_info_event(
-                    format!("权限已更新为 {label}"),
-                    /*hint*/ None,
-                ),
+                history_cell::new_info_event(format!("权限已更新为 {label}"), /*hint*/ None),
             )));
         })]
     }
@@ -10604,9 +10545,7 @@ impl ChatWidget {
             };
             let is_installed = connector.is_accessible;
             let selected_label = if is_installed {
-                format!(
-                    "{status_label}。按 Enter 打开应用页面以安装、管理或启用/禁用此应用。"
-                )
+                format!("{status_label}。按 Enter 打开应用页面以安装、管理或启用/禁用此应用。")
             } else {
                 format!("{status_label}。按 Enter 打开应用页面以安装此应用。")
             };

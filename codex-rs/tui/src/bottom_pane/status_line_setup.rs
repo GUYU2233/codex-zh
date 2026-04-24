@@ -126,12 +126,8 @@ impl StatusLineItem {
             StatusLineItem::ProjectRoot => "项目名称（不可用时省略）",
             StatusLineItem::GitBranch => "当前 Git 分支（不可用时省略）",
             StatusLineItem::Status => "紧凑的会话运行状态文本（就绪、工作中、思考中）",
-            StatusLineItem::ContextRemaining => {
-                "上下文窗口剩余百分比（未知时省略）"
-            }
-            StatusLineItem::ContextUsed => {
-                "上下文窗口已用百分比（未知时省略）"
-            }
+            StatusLineItem::ContextRemaining => "上下文窗口剩余百分比（未知时省略）",
+            StatusLineItem::ContextUsed => "上下文窗口已用百分比（未知时省略）",
             StatusLineItem::FiveHourLimit => {
                 "Remaining usage on 5-hour usage limit (omitted when unavailable)"
             }

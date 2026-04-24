@@ -548,11 +548,7 @@ impl AuthModeWidget {
     }
 
     fn render_chatgpt_success(&self, area: Rect, buf: &mut Buffer) {
-        let lines = vec![
-            "✓ 已使用你的 ChatGPT 账号登录"
-                .fg(Color::Green)
-                .into(),
-        ];
+        let lines = vec!["✓ 已使用你的 ChatGPT 账号登录".fg(Color::Green).into()];
 
         Paragraph::new(lines)
             .wrap(Wrap { trim: false })
@@ -590,11 +586,7 @@ impl AuthModeWidget {
         ];
         if state.prepopulated_from_env {
             intro_lines.push("  检测到 OPENAI_API_KEY 环境变量。".into());
-            intro_lines.push(
-                "  如需使用其他账号，请粘贴另一个 key。"
-                    .dim()
-                    .into(),
-            );
+            intro_lines.push("  如需使用其他账号，请粘贴另一个 key。".dim().into());
             intro_lines.push("".into());
         }
         Paragraph::new(intro_lines)
@@ -617,10 +609,8 @@ impl AuthModeWidget {
             )
             .render(input_area, buf);
 
-        let mut footer_lines: Vec<Line> = vec![
-            "  按 Enter 保存".dim().into(),
-            "  按 Esc 返回".dim().into(),
-        ];
+        let mut footer_lines: Vec<Line> =
+            vec!["  按 Enter 保存".dim().into(), "  按 Esc 返回".dim().into()];
         if let Some(error) = self.error_message() {
             footer_lines.push("".into());
             footer_lines.push(error.red().into());

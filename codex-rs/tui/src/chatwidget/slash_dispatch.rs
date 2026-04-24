@@ -25,8 +25,7 @@ struct PreparedSlashCommandArgs {
 }
 
 const SIDE_STARTING_CONTEXT_LABEL: &str = "侧边对话启动中...";
-const SIDE_REVIEW_UNAVAILABLE_MESSAGE: &str =
-    "代码审查运行时无法使用 '/side'。";
+const SIDE_REVIEW_UNAVAILABLE_MESSAGE: &str = "代码审查运行时无法使用 '/side'。";
 const SIDE_SLASH_COMMAND_UNAVAILABLE_HINT: &str = "请先按 Esc 返回主线程。";
 
 impl ChatWidget {

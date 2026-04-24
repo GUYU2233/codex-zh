@@ -97,9 +97,7 @@ impl SlashCommand {
             SlashCommand::MemoryDrop => "DO NOT USE",
             SlashCommand::MemoryUpdate => "DO NOT USE",
             SlashCommand::Model => "选择要使用的模型和推理强度",
-            SlashCommand::Fast => {
-                "切换快速模式，以更高计划用量换取最快推理"
-            }
+            SlashCommand::Fast => "切换快速模式，以更高计划用量换取最快推理",
             SlashCommand::Personality => "选择 Codex 的沟通风格",
             SlashCommand::Realtime => "切换实时语音模式（实验性）",
             SlashCommand::Settings => "配置实时麦克风/扬声器",

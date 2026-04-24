@@ -87,17 +87,11 @@ impl TerminalTitleItem {
             TerminalTitleItem::AppName => "Codex app name",
             TerminalTitleItem::Project => "项目名称（回退为当前目录名）",
             TerminalTitleItem::CurrentDir => "当前工作目录",
-            TerminalTitleItem::Spinner => {
-                "任务动画指示器（空闲或动画关闭时省略）"
-            }
-            TerminalTitleItem::Status => {
-                "紧凑的会话运行状态文本（就绪、工作中、思考中）"
-            }
+            TerminalTitleItem::Spinner => "任务动画指示器（空闲或动画关闭时省略）",
+            TerminalTitleItem::Status => "紧凑的会话运行状态文本（就绪、工作中、思考中）",
             TerminalTitleItem::Thread => "当前线程标题（不可用时省略）",
             TerminalTitleItem::GitBranch => "当前 Git 分支（不可用时省略）",
-            TerminalTitleItem::ContextRemaining => {
-                "上下文窗口剩余百分比（未知时省略）"
-            }
+            TerminalTitleItem::ContextRemaining => "上下文窗口剩余百分比（未知时省略）",
             TerminalTitleItem::ContextUsed => {
                 "Percentage of context window used (omitted when unknown)"
             }
