@@ -224,20 +224,20 @@ impl WidgetRef for &CwdPromptScreen {
         column.push("");
         column.push(selection_option_row(
             /*index*/ 0,
-            format!("Use session directory ({session_cwd})"),
+            format!("使用会话目录（{session_cwd}）"),
             self.highlighted == CwdSelection::Session,
         ));
         column.push(selection_option_row(
             /*index*/ 1,
-            format!("Use current directory ({current_cwd})"),
+            format!("使用当前目录（{current_cwd}）"),
             self.highlighted == CwdSelection::Current,
         ));
         column.push("");
         column.push(
             Line::from(vec![
-                "Press ".dim(),
+                "按 ".dim(),
                 key_hint::plain(KeyCode::Enter).into(),
-                " to continue".dim(),
+                " 继续".dim(),
             ])
             .inset(Insets::tlbr(
                 /*top*/ 0, /*left*/ 2, /*bottom*/ 0, /*right*/ 0,

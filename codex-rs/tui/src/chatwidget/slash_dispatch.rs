@@ -24,10 +24,10 @@ struct PreparedSlashCommandArgs {
     source: SlashCommandDispatchSource,
 }
 
-const SIDE_STARTING_CONTEXT_LABEL: &str = "Side starting...";
+const SIDE_STARTING_CONTEXT_LABEL: &str = "侧边对话启动中...";
 const SIDE_REVIEW_UNAVAILABLE_MESSAGE: &str =
-    "'/side' is unavailable while code review is running.";
-const SIDE_SLASH_COMMAND_UNAVAILABLE_HINT: &str = "Press Esc to return to the main thread first.";
+    "代码审查运行时无法使用 '/side'。";
+const SIDE_SLASH_COMMAND_UNAVAILABLE_HINT: &str = "请先按 Esc 返回主线程。";
 
 impl ChatWidget {
     /// Dispatch a bare slash command and record its staged local-history entry.
@@ -554,7 +554,7 @@ impl ChatWidget {
                 self.session_telemetry
                     .counter("codex.thread.rename", /*inc*/ 1, &[]);
                 let Some(name) = crate::legacy_core::util::normalize_thread_name(&args) else {
-                    self.add_error_message("Thread name cannot be empty.".to_string());
+                    self.add_error_message("线程名称不能为空。".to_string());
                     return;
                 };
                 self.app_event_tx.set_thread_name(name);
@@ -574,7 +574,7 @@ impl ChatWidget {
                 if self.is_session_configured() {
                     self.reasoning_buffer.clear();
                     self.full_reasoning_buffer.clear();
-                    self.set_status_header(String::from("Working"));
+                    self.set_status_header(String::from("工作中"));
                     self.submit_user_message(user_message);
                 } else {
                     self.queue_user_message(user_message);

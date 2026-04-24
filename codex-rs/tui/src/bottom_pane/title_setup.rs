@@ -85,18 +85,18 @@ impl TerminalTitleItem {
     pub(crate) fn description(self) -> &'static str {
         match self {
             TerminalTitleItem::AppName => "Codex app name",
-            TerminalTitleItem::Project => "Project name (falls back to current directory name)",
-            TerminalTitleItem::CurrentDir => "Current working directory",
+            TerminalTitleItem::Project => "项目名称（回退为当前目录名）",
+            TerminalTitleItem::CurrentDir => "当前工作目录",
             TerminalTitleItem::Spinner => {
-                "Animated task spinner (omitted while idle or when animations are off)"
+                "任务动画指示器（空闲或动画关闭时省略）"
             }
             TerminalTitleItem::Status => {
-                "Compact session run-state text (Ready, Working, Thinking)"
+                "紧凑的会话运行状态文本（就绪、工作中、思考中）"
             }
-            TerminalTitleItem::Thread => "Current thread title (omitted when unavailable)",
-            TerminalTitleItem::GitBranch => "Current Git branch (omitted when unavailable)",
+            TerminalTitleItem::Thread => "当前线程标题（不可用时省略）",
+            TerminalTitleItem::GitBranch => "当前 Git 分支（不可用时省略）",
             TerminalTitleItem::ContextRemaining => {
-                "Percentage of context window remaining (omitted when unknown)"
+                "上下文窗口剩余百分比（未知时省略）"
             }
             TerminalTitleItem::ContextUsed => {
                 "Percentage of context window used (omitted when unknown)"

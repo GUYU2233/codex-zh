@@ -622,20 +622,20 @@ impl ChatWidget {
 
         match self.terminal_title_status_kind {
             TerminalTitleStatusKind::Working if !self.bottom_pane.is_task_running() => {
-                "Ready".to_string()
+                "就绪".to_string()
             }
             TerminalTitleStatusKind::WaitingForBackgroundTerminal
                 if !self.bottom_pane.is_task_running() =>
             {
-                "Ready".to_string()
+                "就绪".to_string()
             }
             TerminalTitleStatusKind::Thinking if !self.bottom_pane.is_task_running() => {
-                "Ready".to_string()
+                "就绪".to_string()
             }
-            TerminalTitleStatusKind::Working => "Working".to_string(),
-            TerminalTitleStatusKind::WaitingForBackgroundTerminal => "Waiting".to_string(),
-            TerminalTitleStatusKind::Undoing => "Undoing".to_string(),
-            TerminalTitleStatusKind::Thinking => "Thinking".to_string(),
+            TerminalTitleStatusKind::Working => "工作中".to_string(),
+            TerminalTitleStatusKind::WaitingForBackgroundTerminal => "等待中".to_string(),
+            TerminalTitleStatusKind::Undoing => "撤销中".to_string(),
+            TerminalTitleStatusKind::Thinking => "思考中".to_string(),
         }
     }
 

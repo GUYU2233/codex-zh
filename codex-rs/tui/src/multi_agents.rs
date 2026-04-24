@@ -543,13 +543,13 @@ fn status_summary_line(status: &AgentStatus) -> Line<'static> {
 
 fn status_summary_spans(status: &AgentStatus) -> Vec<Span<'static>> {
     match status {
-        AgentStatus::PendingInit => vec![Span::from("Pending init").cyan()],
-        AgentStatus::Running => vec![Span::from("Running").cyan().bold()],
+        AgentStatus::PendingInit => vec![Span::from("等待初始化").cyan()],
+        AgentStatus::Running => vec![Span::from("运行中").cyan().bold()],
         // Allow `.yellow()`
         #[allow(clippy::disallowed_methods)]
-        AgentStatus::Interrupted => vec![Span::from("Interrupted").yellow()],
+        AgentStatus::Interrupted => vec![Span::from("已中断").yellow()],
         AgentStatus::Completed(message) => {
-            let mut spans = vec![Span::from("Completed").green()];
+            let mut spans = vec![Span::from("已完成").green()];
             if let Some(message) = message.as_ref() {
                 let message_preview = truncate_text(
                     &message.split_whitespace().collect::<Vec<_>>().join(" "),
@@ -563,7 +563,7 @@ fn status_summary_spans(status: &AgentStatus) -> Vec<Span<'static>> {
             spans
         }
         AgentStatus::Errored(error) => {
-            let mut spans = vec![Span::from("Error").red()];
+            let mut spans = vec![Span::from("错误").red()];
             let error_preview = truncate_text(
                 &error.split_whitespace().collect::<Vec<_>>().join(" "),
                 COLLAB_AGENT_ERROR_PREVIEW_GRAPHEMES,
@@ -574,8 +574,8 @@ fn status_summary_spans(status: &AgentStatus) -> Vec<Span<'static>> {
             }
             spans
         }
-        AgentStatus::Shutdown => vec![Span::from("Shutdown")],
-        AgentStatus::NotFound => vec![Span::from("Not found").red()],
+        AgentStatus::Shutdown => vec![Span::from("已关闭")],
+        AgentStatus::NotFound => vec![Span::from("未找到").red()],
     }
 }
 

@@ -69,9 +69,9 @@ use codex_protocol::protocol::AskForApproval;
 use codex_protocol::user_input::UserInput;
 use codex_terminal_detection::TerminalName;
 
-/// Codex CLI
+/// Codex 命令行工具
 ///
-/// If no subcommand is specified, options will be forwarded to the interactive CLI.
+/// 如果没有指定子命令，参数会传递给交互式 CLI。
 #[derive(Debug, Parser)]
 #[clap(
     author,
@@ -103,59 +103,59 @@ struct MultitoolCli {
 
 #[derive(Debug, clap::Subcommand)]
 enum Subcommand {
-    /// Run Codex non-interactively.
+    /// 以非交互方式运行 Codex。
     #[clap(visible_alias = "e")]
     Exec(ExecCli),
 
-    /// Run a code review non-interactively.
+    /// 以非交互方式运行代码审查。
     Review(ReviewArgs),
 
-    /// Manage login.
+    /// 管理登录。
     Login(LoginCommand),
 
-    /// Remove stored authentication credentials.
+    /// 移除已保存的认证凭据。
     Logout(LogoutCommand),
 
-    /// Manage external MCP servers for Codex.
+    /// 管理 Codex 的外部 MCP 服务器。
     Mcp(McpCli),
 
-    /// Manage Codex plugins.
+    /// 管理 Codex 插件。
     Plugin(PluginCli),
 
-    /// Start Codex as an MCP server (stdio).
+    /// 以 MCP 服务器模式启动 Codex（stdio）。
     McpServer,
 
-    /// [experimental] Run the app server or related tooling.
+    /// [实验性] 运行应用服务器或相关工具。
     AppServer(AppServerCommand),
 
-    /// Launch the Codex desktop app (opens the app installer if missing).
+    /// 启动 Codex 桌面应用（缺失时打开安装器）。
     #[cfg(any(target_os = "macos", target_os = "windows"))]
     App(app_cmd::AppCommand),
 
-    /// Generate shell completion scripts.
+    /// 生成 shell 补全脚本。
     Completion(CompletionCommand),
 
-    /// Run commands within a Codex-provided sandbox.
+    /// 在 Codex 提供的沙箱中运行命令。
     Sandbox(SandboxArgs),
 
-    /// Debugging tools.
+    /// 调试工具。
     Debug(DebugCommand),
 
     /// Execpolicy tooling.
     #[clap(hide = true)]
     Execpolicy(ExecpolicyCommand),
 
-    /// Apply the latest diff produced by Codex agent as a `git apply` to your local working tree.
+    /// 将 Codex agent 生成的最新 diff 作为 `git apply` 应用到本地工作区。
     #[clap(visible_alias = "a")]
     Apply(ApplyCommand),
 
-    /// Resume a previous interactive session (picker by default; use --last to continue the most recent).
+    /// 恢复之前的交互会话（默认打开选择器；用 --last 继续最近一次会话）。
     Resume(ResumeCommand),
 
-    /// Fork a previous interactive session (picker by default; use --last to fork the most recent).
+    /// 分叉之前的交互会话（默认打开选择器；用 --last 分叉最近一次会话）。
     Fork(ForkCommand),
 
-    /// [EXPERIMENTAL] Browse tasks from Codex Cloud and apply changes locally.
+    /// [实验性] 浏览 Codex Cloud 任务并在本地应用变更。
     #[clap(name = "cloud", alias = "cloud-tasks")]
     Cloud(CloudTasksCli),
 
@@ -171,10 +171,10 @@ enum Subcommand {
     #[clap(hide = true, name = "stdio-to-uds")]
     StdioToUds(StdioToUdsCommand),
 
-    /// [EXPERIMENTAL] Run the standalone exec-server service.
+    /// [实验性] 运行独立的 exec-server 服务。
     ExecServer(ExecServerCommand),
 
-    /// Inspect feature flags.
+    /// 查看功能开关。
     Features(FeaturesCli),
 }
 
@@ -276,20 +276,20 @@ struct DebugTraceReduceCommand {
 
 #[derive(Debug, Parser)]
 struct ResumeCommand {
-    /// Conversation/session id (UUID) or thread name. UUIDs take precedence if it parses.
-    /// If omitted, use --last to pick the most recent recorded session.
+    /// 会话 ID（UUID）或线程名称。能解析为 UUID 时优先按 UUID 处理。
+    /// 省略时，使用 --last 选择最近记录的会话。
     #[arg(value_name = "SESSION_ID")]
     session_id: Option<String>,
 
-    /// Continue the most recent session without showing the picker.
+    /// 不显示选择器，直接继续最近一次会话。
     #[arg(long = "last", default_value_t = false)]
     last: bool,
 
-    /// Show all sessions (disables cwd filtering and shows CWD column).
+    /// 显示所有会话（禁用当前目录过滤，并显示 CWD 列）。
     #[arg(long = "all", default_value_t = false)]
     all: bool,
 
-    /// Include non-interactive sessions in the resume picker and --last selection.
+    /// 在恢复选择器和 --last 选择中包含非交互会话。
     #[arg(long = "include-non-interactive", default_value_t = false)]
     include_non_interactive: bool,
 
@@ -302,16 +302,16 @@ struct ResumeCommand {
 
 #[derive(Debug, Parser)]
 struct ForkCommand {
-    /// Conversation/session id (UUID). When provided, forks this session.
-    /// If omitted, use --last to pick the most recent recorded session.
+    /// 会话 ID（UUID）。提供后会分叉该会话。
+    /// 省略时，使用 --last 选择最近记录的会话。
     #[arg(value_name = "SESSION_ID")]
     session_id: Option<String>,
 
-    /// Fork the most recent session without showing the picker.
+    /// 不显示选择器，直接分叉最近一次会话。
     #[arg(long = "last", default_value_t = false, conflicts_with = "session_id")]
     last: bool,
 
-    /// Show all sessions (disables cwd filtering and shows CWD column).
+    /// 显示所有会话（禁用当前目录过滤，并显示 CWD 列）。
     #[arg(long = "all", default_value_t = false)]
     all: bool,
 
@@ -330,15 +330,15 @@ struct SandboxArgs {
 
 #[derive(Debug, clap::Subcommand)]
 enum SandboxCommand {
-    /// Run a command under Seatbelt (macOS only).
+    /// 在 Seatbelt 下运行命令（仅 macOS）。
     #[clap(visible_alias = "seatbelt")]
     Macos(SeatbeltCommand),
 
-    /// Run a command under the Linux sandbox (bubblewrap by default).
+    /// 在 Linux 沙箱中运行命令（默认使用 bubblewrap）。
     #[clap(visible_alias = "landlock")]
     Linux(LandlockCommand),
 
-    /// Run a command under Windows restricted token (Windows only).
+    /// 使用 Windows 受限令牌运行命令（仅 Windows）。
     Windows(WindowsCommand),
 }
 
@@ -350,7 +350,7 @@ struct ExecpolicyCommand {
 
 #[derive(Debug, clap::Subcommand)]
 enum ExecpolicySubcommand {
-    /// Check execpolicy files against a command.
+    /// 按命令检查 execpolicy 文件。
     #[clap(name = "check")]
     Check(ExecPolicyCheckCommand),
 }
@@ -362,7 +362,7 @@ struct LoginCommand {
 
     #[arg(
         long = "with-api-key",
-        help = "Read the API key from stdin (e.g. `printenv OPENAI_API_KEY | codex login --with-api-key`)"
+        help = "从 stdin 读取 API key（例如 `printenv OPENAI_API_KEY | codex login --with-api-key`）"
     )]
     with_api_key: bool,
 
@@ -371,7 +371,7 @@ struct LoginCommand {
         num_args = 0..=1,
         default_missing_value = "",
         value_name = "API_KEY",
-        help = "(deprecated) Previously accepted the API key directly; now exits with guidance to use --with-api-key",
+        help = "（已弃用）过去可直接接收 API key；现在会提示改用 --with-api-key 后退出",
         hide = true
     )]
     api_key: Option<String>,
@@ -394,7 +394,7 @@ struct LoginCommand {
 
 #[derive(Debug, clap::Subcommand)]
 enum LoginSubcommand {
-    /// Show login status.
+    /// 显示登录状态。
     Status,
 }
 
