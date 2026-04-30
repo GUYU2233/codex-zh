@@ -18,8 +18,10 @@ use strum_macros::EnumString;
 
 use crate::app_event::AppEvent;
 use crate::app_event_sender::AppEventSender;
+use crate::bottom_pane::ACTION_REQUIRED_PREVIEW_PREFIX;
 use crate::bottom_pane::CancellationEvent;
 use crate::bottom_pane::bottom_pane_view::BottomPaneView;
+use crate::bottom_pane::build_action_required_title_text;
 use crate::bottom_pane::multi_select_picker::MultiSelectItem;
 use crate::bottom_pane::multi_select_picker::MultiSelectPicker;
 use crate::bottom_pane::status_surface_preview::StatusSurfacePreviewData;
@@ -41,7 +43,8 @@ pub(crate) enum TerminalTitleItem {
     Project,
     /// Current working directory path.
     CurrentDir,
-    /// Animated task spinner while active.
+    /// Terminal-title activity indicator while active.
+    #[strum(to_string = "activity", serialize = "spinner")]
     Spinner,
     /// Compact runtime run-state text.
     #[strum(to_string = "run-state", serialize = "status")]
@@ -87,32 +90,32 @@ impl TerminalTitleItem {
             TerminalTitleItem::AppName => "Codex app name",
             TerminalTitleItem::Project => "项目名称（回退为当前目录名）",
             TerminalTitleItem::CurrentDir => "当前工作目录",
-            TerminalTitleItem::Spinner => "任务动画指示器（空闲或动画关闭时省略）",
+            TerminalTitleItem::Spinner => "工作时显示动画，阻塞时显示需要处理的消息",
             TerminalTitleItem::Status => "紧凑的会话运行状态文本（就绪、工作中、思考中）",
             TerminalTitleItem::Thread => "当前线程标题（不可用时省略）",
             TerminalTitleItem::GitBranch => "当前 Git 分支（不可用时省略）",
             TerminalTitleItem::ContextRemaining => "上下文窗口剩余百分比（未知时省略）",
             TerminalTitleItem::ContextUsed => {
-                "Percentage of context window used (omitted when unknown)"
+                "上下文窗口已用百分比（未知时省略）"
             }
             TerminalTitleItem::FiveHourLimit => {
-                "Remaining usage on 5-hour usage limit (omitted when unavailable)"
+                "5 小时用量限制的剩余额度（不可用时省略）"
             }
             TerminalTitleItem::WeeklyLimit => {
-                "Remaining usage on weekly usage limit (omitted when unavailable)"
+                "每周用量限制的剩余额度（不可用时省略）"
             }
-            TerminalTitleItem::CodexVersion => "Codex application version",
-            TerminalTitleItem::UsedTokens => "Total tokens used in session (omitted when zero)",
-            TerminalTitleItem::TotalInputTokens => "Total input tokens used in session",
-            TerminalTitleItem::TotalOutputTokens => "Total output tokens used in session",
+            TerminalTitleItem::CodexVersion => "Codex 应用版本",
+            TerminalTitleItem::UsedTokens => "当前会话已用总 Tokens（为 0 时省略）",
+            TerminalTitleItem::TotalInputTokens => "当前会话已用输入 Tokens 总数",
+            TerminalTitleItem::TotalOutputTokens => "当前会话已用输出 Tokens 总数",
             TerminalTitleItem::SessionId => {
-                "Current session identifier (omitted until session starts)"
+                "当前会话标识符（会话开始前省略）"
             }
-            TerminalTitleItem::FastMode => "Whether Fast mode is currently active",
-            TerminalTitleItem::Model => "Current model name",
-            TerminalTitleItem::ModelWithReasoning => "Current model name with reasoning level",
+            TerminalTitleItem::FastMode => "当前是否启用 Fast 模式",
+            TerminalTitleItem::Model => "当前模型名称",
+            TerminalTitleItem::ModelWithReasoning => "当前模型名称及推理级别",
             TerminalTitleItem::TaskProgress => {
-                "Latest task progress from update_plan (omitted until available)"
+                "来自 update_plan 的最新任务进度（可用前省略）"
             }
         }
     }
@@ -148,8 +151,8 @@ impl TerminalTitleItem {
 
     /// Returns the separator to place before this item in a rendered title.
     ///
-    /// The spinner gets a plain space on either side so it reads as
-    /// `my-project <spinner> Working` rather than `my-project | <spinner> | Working`.
+    /// The activity indicator gets a plain space on either side so it reads as
+    /// `my-project <activity> Working` rather than `my-project | <activity> | Working`.
     /// All other adjacent items are joined with ` | `.
     pub(crate) fn separator_from_previous(self, previous: Option<Self>) -> &'static str {
         match previous {
@@ -168,17 +171,25 @@ pub(crate) fn preview_line_for_title_items(
     items: &[TerminalTitleItem],
     preview_data: &StatusSurfacePreviewData,
 ) -> Option<Line<'static>> {
+    if items.contains(&TerminalTitleItem::Spinner) {
+        let preview = build_action_required_title_text(
+            ACTION_REQUIRED_PREVIEW_PREFIX,
+            items.iter().copied(),
+            &[],
+            |item| {
+                item.preview_item()
+                    .and_then(|preview_item| preview_data.value_for(preview_item))
+                    .map(str::to_owned)
+            },
+        );
+        return Some(Line::from(preview));
+    }
+
     let mut previous = None;
     let preview = items
         .iter()
         .copied()
         .fold(String::new(), |mut preview, item| {
-            if item == TerminalTitleItem::Spinner {
-                preview.push_str(item.separator_from_previous(previous));
-                preview.push('⠋');
-                previous = Some(item);
-                return preview;
-            }
             let Some(value) = item
                 .preview_item()
                 .and_then(|preview_item| preview_data.value_for(preview_item))
@@ -363,7 +374,7 @@ mod tests {
         let tx = AppEventSender::new(tx_raw);
         let selected = [
             "project-name".to_string(),
-            "spinner".to_string(),
+            "activity".to_string(),
             "run-state".to_string(),
             "thread-title".to_string(),
         ];
@@ -378,7 +389,7 @@ mod tests {
     #[test]
     fn parse_terminal_title_items_preserves_order() {
         let items = parse_terminal_title_items(
-            ["project-name", "spinner", "run-state", "thread-title"].into_iter(),
+            ["project-name", "activity", "run-state", "thread-title"].into_iter(),
         );
         assert_eq!(
             items,
@@ -395,6 +406,19 @@ mod tests {
     fn parse_terminal_title_items_rejects_invalid_ids() {
         let items = parse_terminal_title_items(["project", "not-a-title-item"].into_iter());
         assert_eq!(items, None);
+    }
+
+    #[test]
+    fn activity_is_canonical_and_accepts_spinner_legacy_id() {
+        assert_eq!(TerminalTitleItem::Spinner.to_string(), "activity");
+        assert_eq!(
+            "activity".parse::<TerminalTitleItem>(),
+            Ok(TerminalTitleItem::Spinner)
+        );
+        assert_eq!(
+            "spinner".parse::<TerminalTitleItem>(),
+            Ok(TerminalTitleItem::Spinner)
+        );
     }
 
     #[test]
@@ -470,7 +494,7 @@ mod tests {
                 "context-used",
                 "five-hour-limit",
                 "git-branch",
-                "spinner",
+                "activity",
                 "current-dir",
                 "project-name",
                 "model",

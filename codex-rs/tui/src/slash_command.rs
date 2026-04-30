@@ -21,6 +21,8 @@ pub enum SlashCommand {
     #[strum(serialize = "sandbox-add-read-dir")]
     SandboxReadRoot,
     Experimental,
+    #[strum(to_string = "autoreview")]
+    AutoReview,
     Memories,
     Skills,
     Review,
@@ -31,6 +33,7 @@ pub enum SlashCommand {
     Init,
     Compact,
     Plan,
+    Goal,
     Collab,
     Agent,
     Side,
@@ -102,6 +105,7 @@ impl SlashCommand {
             SlashCommand::Realtime => "切换实时语音模式（实验性）",
             SlashCommand::Settings => "配置实时麦克风/扬声器",
             SlashCommand::Plan => "切换到计划模式",
+            SlashCommand::Goal => "设置或查看长时间任务的目标",
             SlashCommand::Collab => "更改协作模式（实验性）",
             SlashCommand::Agent | SlashCommand::MultiAgents => "切换当前 agent 线程",
             SlashCommand::Side => "在临时分叉中开始侧边对话",
@@ -112,6 +116,7 @@ impl SlashCommand {
                 "允许沙箱读取目录：/sandbox-add-read-dir <absolute_path>"
             }
             SlashCommand::Experimental => "切换实验性功能",
+            SlashCommand::AutoReview => "批准最近一次自动审查拒绝后的单次重试",
             SlashCommand::Memories => "配置记忆的使用和生成",
             SlashCommand::Mcp => "列出已配置的 MCP 工具；使用 /mcp verbose 查看详情",
             SlashCommand::Apps => "管理应用",
@@ -135,6 +140,7 @@ impl SlashCommand {
             SlashCommand::Review
                 | SlashCommand::Rename
                 | SlashCommand::Plan
+                | SlashCommand::Goal
                 | SlashCommand::Fast
                 | SlashCommand::Mcp
                 | SlashCommand::Side
@@ -184,9 +190,11 @@ impl SlashCommand {
             | SlashCommand::DebugConfig
             | SlashCommand::Ps
             | SlashCommand::Stop
+            | SlashCommand::Goal
             | SlashCommand::Mcp
             | SlashCommand::Apps
             | SlashCommand::Plugins
+            | SlashCommand::AutoReview
             | SlashCommand::Feedback
             | SlashCommand::Quit
             | SlashCommand::Exit
@@ -236,5 +244,19 @@ mod tests {
     #[test]
     fn clean_alias_parses_to_stop_command() {
         assert_eq!(SlashCommand::from_str("clean"), Ok(SlashCommand::Stop));
+    }
+
+    #[test]
+    fn goal_command_is_available_during_task() {
+        assert!(SlashCommand::Goal.available_during_task());
+    }
+
+    #[test]
+    fn auto_review_command_is_autoreview() {
+        assert_eq!(SlashCommand::AutoReview.command(), "autoreview");
+        assert_eq!(
+            SlashCommand::from_str("autoreview"),
+            Ok(SlashCommand::AutoReview)
+        );
     }
 }
